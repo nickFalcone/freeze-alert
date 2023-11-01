@@ -15,13 +15,25 @@ sender = os.environ.get('SENDER')
 call_number = os.environ.get('CALL_NUMBER')
 points = os.environ.get('POINTS')
 subject = os.environ.get('SUBJECT')
-hours_from_now = 48
+hours_from_now = 72
 trigger_temperature = 32
 
 
 def check_temperature():
-    response = requests.get(
-        f"https://api.weather.gov/gridpoints/{points}/forecast/hourly")
+    for _ in range(3):  # Retry up to 3 times
+        try:
+            response = requests.get(
+                f"https://api.weather.gov/gridpoints/{points}/forecast/hourly"
+            )
+            response.raise_for_status()  # This will raise an HTTPError if the request failed
+            break  # Exit the loop if the request was successful
+        except requests.HTTPError as e:
+            print(f"Failed to retrieve data: {e}, retrying...")
+
+    # The loop completes without breaking (all retries failed)
+    else:
+        print("Failed to retrieve data after 3 attempts")
+        return
     weather_data = response.json()
 
     alert_times = []
@@ -52,6 +64,7 @@ def check_temperature():
                 <ul>
                 <li>Keep heat set to 60 degrees Fahrenheit or higher</li>
                 <li>Cover front and rear spigots</li>
+                <li>During extreme cold, turn on a faucet inside the home to a drip to reduce pressure</li>
                 </ul>
                 <p>In case of a burst pipe:</p>
                 <ul>
@@ -59,7 +72,7 @@ def check_temperature():
                 <li>Call <a href="tel:{call_number}">{call_number}</a> and listen for prompts to reach an on-call manager</li>
                 <li>If the sprinkler system has activated, call 911</li>
                 </ul>
-                <p>This is an auto-generated email using the 48-hour weather forecast. Please reply to report an issue.</p>
+                <p>This is an auto-generated email using the {hours_from_now}-hour weather forecast. Please reply to report an issue or to unsubscribe. If you were forwarded this message and wish to subscribe to future freeze alerts, please reply.</p>
             </body>
             </html>
             '''
@@ -74,5 +87,6 @@ def check_temperature():
             server.send_message(msg)
 
 
+# to enable running this script directly from local environment
 if __name__ == "__main__":
     check_temperature()

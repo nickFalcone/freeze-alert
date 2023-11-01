@@ -7,10 +7,11 @@ App to send an email when temperatures are forecast to fall below freezing.
 git clone git@github.com:nickFalcone/freeze-alert.git
 cd freeze-alert/
 python3 -m venv venv
-pip install -r requirements.txt
+source venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
-Set the following environment variables in `.env`: 
+Set the following environment variables in `.env`:
 
 ```bash
 # https://docs.sendgrid.com/ui/account-and-settings/api-keys
