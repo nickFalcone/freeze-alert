@@ -18,8 +18,8 @@ Set the following environment variables in `.env`:
 SEND_GRID_API_KEY="my.api.key"
 # sender email needs to be verified with Send Grid
 SENDER="sender@example.com"
-RECIPIENTS="recipient1@example.com, recipient1@example.com"
-CALL_NUMBER="8008675309"
+RECIPIENTS="recipient1@example.com, recipient2@example.com"
+CALL_NUMBER="8675309"
 # enter lat/long https://api.weather.gov/points/{latitude},{longitude} and use `forecastHourly` for office/pt1,pt2 values
 # eg. https://api.weather.gov/gridpoints/AFG/380,355/forecast/hourly
 POINTS="AFG/380,355"
